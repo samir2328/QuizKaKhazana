@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Ka Khazana - Choose Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            color: white;
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Navigation Styles */
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 30px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            margin-left: auto;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 5px 10px;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: white;
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Quiz Cards Container */
+        .quiz-container {
+            padding-top: 100px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px 20px 50px;
+            position: relative;
+        }
+
+        .quiz-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .quiz-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quiz-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, 
+                rgba(255,255,255,0.1) 0%, 
+                rgba(255,255,255,0) 100%);
+            z-index: 0;
+        }
+
+        .quiz-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            border-color: rgba(255,255,255,0.4);
+        }
+
+        .quiz-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .quiz-title {
+            font-size: 1.8em;
+            color: white;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .quiz-description {
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 25px;
+            line-height: 1.6;
+            position: relative;
+            z-index: 1;
+        }
+
+        .start-quiz-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .start-quiz-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .page-title {
+            text-align: center;
+            color: white;
+            font-size: 2.5em;
+            margin-bottom: 40px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        /* Responsive Design */
+        @media screen and (max-width: 768px) {
+            .navbar {
+                padding: 15px;
+            }
+
+            .nav-links {
+                gap: 15px;
+            }
+
+            .nav-links a {
+                font-size: 1em;
+                padding: 5px;
+            }
+
+            .quiz-cards {
+                grid-template-columns: 1fr;
+                padding: 0 20px;
+            }
+
+            .page-title {
+                font-size: 2em;
+                padding: 0 20px;
+            }
+
+            .quiz-card {
+                margin: 0 auto;
+                max-width: 400px;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .nav-links {
+                gap: 10px;
+                margin-left: 0;
+                justify-content: center;
+                width: 100%;
+            }
+
+            .nav-links a {
+                font-size: 1em;
+                padding: 5px;
+            }
+
+            .page-title {
+                font-size: 1.8em;
+            }
+
+            .quiz-icon {
+                font-size: 3em;
+            }
+
+            .quiz-title {
+                font-size: 1.5em;
+            }
+        }
+
+        /* Add these new styles for the popup */
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            position: relative;
+            animation: popupAnimation 0.3s ease-out;
+        }
+
+        @keyframes popupAnimation {
+            from {
+                transform: scale(0.7);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .popup h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+
+        .popup p {
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .popup-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            color: #999;
+            cursor: pointer;
+            border: none;
+            background: none;
+            padding: 5px;
+        }
+
+        .popup-close:hover {
+            color: #333;
+        }
+
+        .popup-btn {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 300% 300%;
+            animation: gradientBG 3s ease infinite;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            font-weight: bold;
+        }
+
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .popup-btn .button-text {
+            position: relative;
+            z-index: 1;
+        }
+
+        .popup-btn .loading-spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            opacity: 0;
+            visibility: hidden;
+            animation: spin 1s linear infinite;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        @keyframes spin {
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        .popup-btn.loading .button-text {
+            opacity: 0;
+        }
+
+        .popup-btn.loading .loading-spinner {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Add shine effect */
+        .popup-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to right,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.3) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% {
+                transform: translateX(-100%) rotate(45deg);
+            }
+            100% {
+                transform: translateX(100%) rotate(45deg);
+            }
+        }
+
+        /* Updated logo styles */
+        .logo {
+            width: 40px;
+            height: 40px;
+            position: relative;
+            animation: logoFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .logo-box {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 3px solid #fff;
+            animation: rotateLogo 6s linear infinite;
+        }
+
+        .logo-box:nth-child(1) {
+            transform: rotate(0deg);
+            animation-duration: 4s;
+            border-color: #fff;
+        }
+
+        .logo-box:nth-child(2) {
+            transform: rotate(45deg);
+            width: 70%;
+            height: 70%;
+            left: 15%;
+            top: 15%;
+            animation-duration: 3s;
+            animation-direction: reverse;
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .logo-box:nth-child(3) {
+            transform: rotate(-45deg);
+            width: 40%;
+            height: 40%;
+            left: 30%;
+            top: 30%;
+            animation-duration: 2s;
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        @keyframes rotateLogo {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .logo-text {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+            position: relative;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .logo-text::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #fff, transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Dark Mode Variables */
+        :root {
+            --background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            --card-bg: rgba(255, 255, 255, 0.1);
+            --text-color: white;
+            --card-border: rgba(255, 255, 255, 0.2);
+            --nav-bg: rgba(255, 255, 255, 0.1);
+            --card-shadow: rgba(0, 0, 0, 0.1);
+            
+            /* Add transition for all variables */
+            transition: all 0.5s ease-in-out;
+        }
+
+        [data-theme="dark"] {
+            --background: #1a1a1a;
+            --card-bg: rgba(0, 0, 0, 0.3);
+            --text-color: #e0e0e0;
+            --card-border: rgba(255, 255, 255, 0.1);
+            --nav-bg: rgba(0, 0, 0, 0.3);
+            --card-shadow: rgba(0, 0, 0, 0.3);
+        }
+
+        /* Add universal transition */
+        * {
+            transition: background-color 0.5s ease-in-out,
+                        color 0.5s ease-in-out,
+                        border-color 0.5s ease-in-out,
+                        box-shadow 0.5s ease-in-out;
+        }
+
+        body {
+            background: var(--background);
+            background-size: 400% 400%;
+            color: var(--text-color);
+            min-height: 100vh;
+            transition: background 0.5s ease-in-out, 
+                        color 0.5s ease-in-out;
+        }
+
+        .navbar {
+            background: var(--nav-bg);
+            backdrop-filter: blur(10px);
+            transition: background-color 0.5s ease-in-out;
+        }
+
+        .quiz-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            box-shadow: 0 4px 6px var(--card-shadow);
+            transition: all 0.5s ease-in-out;
+        }
+
+        .quiz-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px var(--card-shadow);
+        }
+
+        .quiz-title {
+            color: var(--text-color);
+            transition: color 0.5s ease-in-out;
+        }
+
+        .quiz-description {
+            color: var(--text-color);
+            opacity: 0.9;
+            transition: color 0.5s ease-in-out;
+        }
+
+        .start-quiz-btn {
+            background: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+            transition: all 0.5s ease-in-out;
+        }
+
+        .start-quiz-btn:hover {
+            background: var(--nav-bg);
+            box-shadow: 0 5px 15px var(--card-shadow);
+        }
+
+        /* Popup styles with transitions */
+        .popup-overlay {
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .popup {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            transition: all 0.5s ease-in-out;
+        }
+
+        .popup h2 {
+            color: var(--text-color);
+            transition: color 0.5s ease-in-out;
+        }
+
+        .popup p {
+            color: var(--text-color);
+            opacity: 0.9;
+            transition: color 0.5s ease-in-out;
+        }
+
+        .popup-btn {
+            background: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--card-border);
+            transition: all 0.5s ease-in-out;
+        }
+
+        /* Animation for showing popup */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .popup {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        /* Update gradient animation to be smoother */
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Responsive styles with transitions */
+        @media screen and (max-width: 768px) {
+            .quiz-card {
+                background: var(--card-bg);
+                transition: all 0.5s ease-in-out;
+            }
+        }
+
+        /* Add animated background for dark mode */
+        [data-theme="dark"] {
+            --background: #1a1a1a;
+            --card-bg: rgba(0, 0, 0, 0.3);
+            --text-color: #e0e0e0;
+            --card-border: rgba(255, 255, 255, 0.1);
+            --nav-bg: rgba(0, 0, 0, 0.3);
+            --card-shadow: rgba(0, 0, 0, 0.3);
+        }
+
+        /* Dark mode animated background */
+        .dark-mode-bg {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        [data-theme="dark"] .dark-mode-bg {
+            display: block;
+        }
+
+        .dark-mode-bg .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjIiIGhlaWdodD0iMiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+') repeat;
+            animation: stars-move 100s linear infinite;
+            opacity: 0.3;
+        }
+
+        .dark-mode-bg .glow {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, 
+                rgba(76, 0, 255, 0.1), 
+                rgba(0, 183, 255, 0.1), 
+                transparent 60%);
+            animation: glow-pulse 8s ease-in-out infinite;
+        }
+
+        .dark-mode-bg .circles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(45deg, rgba(76, 0, 255, 0.1), rgba(0, 183, 255, 0.1));
+            animation: circle-float infinite ease-in-out;
+        }
+
+        .circle:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: 20%;
+            left: 10%;
+            animation-duration: 15s;
+        }
+
+        .circle:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            top: 40%;
+            right: 20%;
+            animation-duration: 12s;
+            animation-delay: -3s;
+        }
+
+        .circle:nth-child(3) {
+            width: 150px;
+            height: 150px;
+            bottom: 30%;
+            left: 30%;
+            animation-duration: 10s;
+            animation-delay: -6s;
+        }
+
+        @keyframes stars-move {
+            from {
+                background-position: 0 0;
+            }
+            to {
+                background-position: 10000px 5000px;
+            }
+        }
+
+        @keyframes glow-pulse {
+            0%, 100% {
+                opacity: 0.3;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(1.2);
+            }
+        }
+
+        @keyframes circle-float {
+            0%, 100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            25% {
+                transform: translate(50px, 50px) rotate(90deg);
+            }
+            50% {
+                transform: translate(0, 100px) rotate(180deg);
+            }
+            75% {
+                transform: translate(-50px, 50px) rotate(270deg);
+            }
+        }
+
+        /* Update body style */
+        body {
+            background: var(--background);
+            color: var(--text-color);
+            position: relative;
+            min-height: 100vh;
+            transition: all 0.5s ease-in-out;
+        }
+
+        /* Ensure content stays above background */
+        .navbar, .quiz-container {
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo-container">
+            <div class="logo">
+                <div class="logo-box"></div>
+                <div class="logo-box"></div>
+                <div class="logo-box"></div>
+            </div>
+            <a href="home.html" class="logo-text">Quiz Ka Khazana</a>
+        </div>
+        <div class="nav-links">
+            <a href="home.html">Home</a>
+            <a href="quiz.html">Quiz</a>
+            <a href="settings.html">Settings</a>
+        </div>
+    </nav>
+
+    <div class="quiz-container">
+        <h1 class="page-title">Choose Your Quiz</h1>
+        <div class="quiz-cards">
+            <div class="quiz-card">
+                <div class="quiz-icon">🧮</div>
+                <h2 class="quiz-title">Mathematics Quiz</h2>
+                <p class="quiz-description">Challenge yourself with various mathematical operations!</p>
+                <button class="start-quiz-btn" onclick="window.location.href='mathquiz.html'">Start Math Quiz</button>
+            </div>
+
+            <div class="quiz-card">
+                <div class="quiz-icon">🌍</div>
+                <h2 class="quiz-title">General Knowledge</h2>
+                <p class="quiz-description">Test your knowledge across various subjects!</p>
+                <button class="start-quiz-btn" onclick="showPopup()">Start GK Quiz</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Update the popup section -->
+    <div class="popup-overlay" id="popupOverlay">
+        <div class="popup">
+            <button class="popup-close" onclick="closePopup()">×</button>
+            <h2>Coming Soon!</h2>
+            <p>The General Knowledge Quiz is currently under development. Meanwhile, you can try our Mathematics Quiz for an exciting learning experience!</p>
+            <button class="popup-btn" onclick="window.location.href='mathquiz.html'">
+                <span class="button-text">Start Math Quiz</span>
+                <div class="loading-spinner"></div>
+            </button>
+        </div>
+    </div>
+
+    <!-- Add this audio element at the end of the body -->
+    <audio id="clickSound" preload="auto">
+        <source src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Add this HTML right after the body tag -->
+    <div class="dark-mode-bg">
+        <div class="stars"></div>
+        <div class="glow"></div>
+        <div class="circles">
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+        </div>
+    </div>
+
+    <!-- Update the existing script -->
+    <script>
+        // Sound utility
+        const clickSound = document.getElementById('clickSound');
+        
+        function playClickSound() {
+            // Reset the audio to start
+            clickSound.currentTime = 0;
+            // Set volume (0.0 to 1.0)
+            clickSound.volume = 0.2;
+            // Play the sound
+            clickSound.play().catch(error => {
+                // Handle any autoplay restrictions
+                console.log("Audio playback failed:", error);
+            });
+        }
+
+        // Add click sound to all buttons and links
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add sound to navigation links
+            const navLinks = document.querySelectorAll('.nav-links a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', playClickSound);
+            });
+
+            // Add sound to all buttons
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                button.addEventListener('click', playClickSound);
+            });
+
+            // Add sound to quiz card links
+            const quizLinks = document.querySelectorAll('.start-quiz-btn');
+            quizLinks.forEach(link => {
+                link.addEventListener('click', playClickSound);
+            });
+
+            // Add sound to popup buttons
+            const popupButtons = document.querySelectorAll('.popup-btn');
+            popupButtons.forEach(button => {
+                button.addEventListener('click', playClickSound);
+            });
+        });
+
+        // Update the navigation functions
+        function showPopup() {
+            document.getElementById('popupOverlay').style.display = 'flex';
+        }
+
+        function closePopup() {
+            document.getElementById('popupOverlay').style.display = 'none';
+        }
+
+        // Direct navigation function
+        function goToMathQuiz() {
+            window.location.href = 'mathquiz.html';
+        }
+
+        // Check and apply dark mode on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add a class to body after load to trigger transitions
+            document.body.classList.add('transitions-enabled');
+            
+            const savedSettings = localStorage.getItem('quizSettings');
+            if (savedSettings) {
+                const settings = JSON.parse(savedSettings);
+                if (settings.darkMode) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    initDarkModeAnimation();
+                }
+            }
+        });
+
+        // Smooth theme transition handler
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'settingsUpdated') {
+                const settings = JSON.parse(localStorage.getItem('quizSettings'));
+                // Add transition class before theme change
+                document.documentElement.classList.add('theme-transition');
+                
+                document.documentElement.setAttribute('data-theme', 
+                    settings.darkMode ? 'dark' : 'light');
+                    
+                // Remove transition class after animation
+                setTimeout(() => {
+                    document.documentElement.classList.remove('theme-transition');
+                }, 500);
+
+                if (settings.darkMode) {
+                    initDarkModeAnimation();
+                }
+            }
+        });
+
+        function initDarkModeAnimation() {
+            // Add any additional animation initialization if needed
+            const circles = document.querySelectorAll('.circle');
+            circles.forEach(circle => {
+                circle.style.animationPlayState = 'running';
+            });
+        }
+    </script>
+</body>
+</html> 
